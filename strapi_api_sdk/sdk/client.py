@@ -146,7 +146,7 @@ class Strapi:
     ) -> dict:
         """Create entry."""
         url = self.__base_url + f"api/{plural_api_id}"
-        header = self._get_auth_header()
+        header = self.__auth_obj.get_auth_header()
         body = {
             'data': data
         }
@@ -169,7 +169,7 @@ class Strapi:
     ) -> dict:
         """Update entry fields."""
         url = self.__base_url + f"api/{plural_api_id}/{document_id}"
-        header = self._get_auth_header()
+        header = self.__auth_obj.get_auth_header()
         body = {
             'data': data
         }
@@ -191,7 +191,7 @@ class Strapi:
     ) -> dict:
         """Delete entry by id."""
         url = self.__base_url + f"api/{plural_api_id}/{document_id}"
-        header = self._get_auth_header()
+        header = self.__auth_obj.get_auth_header()
         
         data = self.__response_handler(
             self.__http.delete(
