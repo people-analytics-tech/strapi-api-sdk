@@ -21,4 +21,3 @@ def flatten_parameters(parameters: dict):
                 yield f'[{key}]{key1}', value1
         else:
             yield f'[{key}]', value 
-  

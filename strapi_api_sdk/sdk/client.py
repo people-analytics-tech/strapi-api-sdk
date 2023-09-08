@@ -5,8 +5,6 @@ from requests import Response
 from strapi_api_sdk.sdk.modules.http import Http
 from strapi_api_sdk.sdk.modules.auth import Authenticator
 
-#from strapi_api_sdk.helpers.query_builder import QueryBuilder  # TODO
-
 from strapi_api_sdk.utils.http_utils import stringify_parameters
 
 from strapi_api_sdk.models.exceptions import ClientError
