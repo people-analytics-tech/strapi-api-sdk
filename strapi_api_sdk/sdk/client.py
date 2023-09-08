@@ -3,27 +3,22 @@ from typing import Optional, List
 from requests import Response
 
 from strapi_api_sdk.sdk.modules.http import Http
-from strapi_api_sdk.sdk.modules.auth import Authenticator
+from strapi_api_sdk.sdk.modules.auth import StrapiAuthenticator
 
 from strapi_api_sdk.utils.http_utils import stringify_parameters
 
 from strapi_api_sdk.models.exceptions import ClientError
 
 
-class Strapi:
+class StrapiClient:
     """Requests based REST API client for Strapi."""
 
-    __http: Http = None
-    __base_url: str = ""
-    __auth_obj: Authenticator = None
+    http: Http = None
+    __auth_obj: StrapiAuthenticator = None
 
-    def __init__(self, base_url: str, auth: Authenticator) -> None:
+    def __init__(self, auth: StrapiAuthenticator) -> None:
         """Initialize client."""
-        if not base_url.endswith('/'):
-            base_url = base_url + '/'
-
-        self.__http: Http = Http()
-        self.__base_url = base_url
+        self.http: Http = Http()
         self.__auth_obj = auth
 
     def __response_handler(self, response: Response) -> Response:
@@ -47,12 +42,12 @@ class Strapi:
             **populate_param,
             **fields_param
         }
-        url = self.__base_url + f"api/{plural_api_id}/{document_id}"
+        endpoint = f"api/{plural_api_id}/{document_id}"
         header = self.__auth_obj.get_auth_header()
     
         data = self.__response_handler(
-            self.__http.get(
-                url=url, 
+            self.http.get(
+                endpoint=endpoint, 
                 headers=header, 
                 params=params
             )
@@ -79,9 +74,7 @@ class Strapi:
         fields_param = stringify_parameters('fields', fields)
         pagination_param = stringify_parameters('pagination', pagination)
         publication_state_param = stringify_parameters('publicationState', publication_state)
-        
-        url = self.__base_url + f"api/{plural_api_id}"
-            
+ 
         params = {
             **sort_param,
             **filters_param,
@@ -90,12 +83,13 @@ class Strapi:
             **fields_param,
             **publication_state_param
         }
+        endpoint = f"api/{plural_api_id}"
         header = self.__auth_obj.get_auth_header()
         
         if not get_all:
             data = self.__response_handler(
-                self.__http.get(
-                    url=url, 
+                self.http.get(
+                    endpoint=endpoint, 
                     headers=header, 
                     params=params
                 )
@@ -118,8 +112,8 @@ class Strapi:
                     params[key] = pagination_param[key]
                     
                 res_obj1 = self.__response_handler(
-                    self.__http.get(
-                        url=url, 
+                    self.http.get(
+                        endpoint=endpoint, 
                         headers=header,
                         params=params
                     )
@@ -143,17 +137,17 @@ class Strapi:
         data: dict
     ) -> dict:
         """Create entry."""
-        url = self.__base_url + f"api/{plural_api_id}"
+        endpoint = f"api/{plural_api_id}"
         header = self.__auth_obj.get_auth_header()
         body = {
             'data': data
         }
         
         data = self.__response_handler(
-            self.__http.post(
-                url=url,  
+            self.http.post(
+                endpoint=endpoint,  
                 headers=header,
-                data=body,
+                data=body
             )
         )
         
@@ -166,17 +160,17 @@ class Strapi:
         data: dict
     ) -> dict:
         """Update entry fields."""
-        url = self.__base_url + f"api/{plural_api_id}/{document_id}"
+        endpoint = f"api/{plural_api_id}/{document_id}"
         header = self.__auth_obj.get_auth_header()
         body = {
             'data': data
         }
         
         data = self.__response_handler(
-            self.__http.put(
-                url=url,  
+            self.http.put(
+                endpoint=endpoint,  
                 headers=header,
-                data=body,
+                data=body
             )
         )
         
@@ -188,12 +182,12 @@ class Strapi:
         document_id: int
     ) -> dict:
         """Delete entry by id."""
-        url = self.__base_url + f"api/{plural_api_id}/{document_id}"
+        endpoint = f"api/{plural_api_id}/{document_id}"
         header = self.__auth_obj.get_auth_header()
         
         data = self.__response_handler(
-            self.__http.delete(
-                url=url,  
+            self.http.delete(
+                endpoint=endpoint,  
                 headers=header
             )
         )
@@ -225,7 +219,7 @@ class Strapi:
         num = current_rec['meta']['pagination']['total']
         
         if unique and num > 1:
-            raise ValueError(f'Keys are ambiguous, found {num} records')
+            raise ValueError(f"Keys are ambiguous, found {num} records")
         
         elif num >= 1:
             return self.update_entry(
