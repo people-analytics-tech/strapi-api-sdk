@@ -43,7 +43,7 @@ class StrapiUser:
 
         return int(role_id[0]["id"])
   
-    def _register_user(
+    def __register_user(
         self,
         username: str,
         email: str,
