@@ -4,6 +4,8 @@ from requests import Response
 
 from strapi_api_sdk.utils.constants import API_ENDPOINT_AUTH_LOCAL
 
+from strapi_api_sdk.settings import API_TOKEN
+
 from strapi_api_sdk.models.exceptions import AuthenticationError
 
 from strapi_api_sdk.sdk.modules.http import Http
@@ -17,7 +19,7 @@ class StrapiAuthenticator:
     
     def __init__(self) -> None:
         self.http: Http = Http()
-        self.__token: str = None
+        self.__token: str = API_TOKEN
     
     def __response_handler(self, response: Response) -> Response:
         if 200 <= response.status_code < 300:
