@@ -1,76 +1,89 @@
-import json
 import requests
+
+from strapi_api_sdk.settings import TIMEOUT, API_BASE_URL
 
 
 class Http:
     def __init__(self):
-        self.headers = {
+        self.__timeout = TIMEOUT
+        self.__api_base_url = API_BASE_URL
+        self.__headers = {
             "Accept": "application/json",
             "Content-Type": "application/json"
         }
 
-    def _http_request(
+        if not self.__api_base_url.endswith('/'):
+            self.__api_base_url = f"{self.__api_base_url}/"
+
+    def __http_request(
         self, 
         method: str, 
-        url: str, 
-        headers: dict = None, 
-        data = None, 
-        params = None
+        endpoint: str, 
+        headers: dict = {},
+        data: dict = {}, 
+        params: dict = {}
     ):
-        if headers is None:
-            headers = {}
-
-        if data is None:
-            data = {}
-
-        headers = {**self.headers, **headers}
+        url = f"{self.__api_base_url}{endpoint}" 
+        headers = {**self.__headers, **headers}
+        timeout = self.__timeout
+        
         return requests.request(
             method=method,
             url=url,
             headers=headers,
-            data=json.dumps(data),
+            timeout=timeout,
+            json=data,
             params=params,
         )
 
+    def set_api_base_url(self, api_base_url: str) -> None:
+        if not api_base_url.endswith('/'):
+            api_base_url = f"{api_base_url}/"
+            
+        self.__api_base_url = api_base_url
+
+    def set_timeout(self, timeout: int) -> None:
+        self.__timeout = timeout
+
     def post(
         self, 
-        url: str, 
-        headers: dict = None, 
-        data: dict = None
+        endpoint: str, 
+        headers: dict = {}, 
+        data: dict = {}
     ):
-        return self._http_request(method="POST", url=url, headers=headers, data=data)
+        return self.__http_request(method="POST", endpoint=endpoint, headers=headers, data=data)
 
     def get(
         self, 
-        url: str, 
-        headers: dict = None, 
-        data: dict = None, 
-        params: dict = None
+        endpoint: str, 
+        headers: dict = {}, 
+        data: dict = {}, 
+        params: dict = {}
     ):
-        return self._http_request(
-            method="GET", url=url, headers=headers, data=data, params=params
+        return self.__http_request(
+            method="GET", endpoint=endpoint, headers=headers, data=data, params=params
         )
 
     def put(
         self, 
-        url: str, 
-        headers: dict = None, 
-        data: dict = None
+        endpoint: str, 
+        headers: dict = {}, 
+        data: dict = {}
     ):
-        return self._http_request(method="PUT", url=url, headers=headers, data=data)
+        return self.__http_request(method="PUT", endpoint=endpoint, headers=headers, data=data)
 
     def patch(
         self, 
-        url: str, 
-        headers: dict = None, 
-        data: dict = None
+        endpoint: str, 
+        headers: dict = {}, 
+        data: dict = {}
     ):
-        return self._http_request(method="PATCH", url=url, headers=headers, data=data)
+        return self.__http_request(method="PATCH", endpoint=endpoint, headers=headers, data=data)
 
     def delete(
         self, 
-        url: str, 
-        headers: dict = None, 
-        data: dict = None
+        endpoint: str, 
+        headers: dict = {}, 
+        data: dict = {}
     ):
-        return self._http_request(method="DELETE", url=url, headers=headers, data=data)
+        return self.__http_request(method="DELETE", endpoint=endpoint, headers=headers, data=data)

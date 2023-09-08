@@ -2,13 +2,14 @@
 name = "strapi-api-sdk"
 version = "0.1.0"
 description = "Interact with Strapi functionalities within your python application, includes the ability to perform create, read, update, and delete (CRUD) operations on existing APIs endpoints and provides an Authenticator class ready to create new users, API Tokens and etc."
-authors = ["Raphael Pereira Gomes <raphaelpgomes1@gmail.com>"]
+authors = ["rapha-pereira <raphaelpgomes1@gmail.com>"]
 license = "MIT"
 readme = "README.md"
 
 [tool.poetry.dependencies]
 python = "^3.11"
 requests = "^2.31.0"
+python-decouple = "^3.8"
 
 
 [build-system]
