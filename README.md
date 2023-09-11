@@ -6,20 +6,6 @@ Interact with Strapi functionalities within your python application, includes th
 pip install strapi-api-sdk
 ```
 
-# Configuration
-## Environment variables
-To use strapi-api-sdk, you need to set two environment variables:
-```dotenv
-# ---DOTENV EXAMPLE---
-STRAPI_API_TOKEN= # Your API Token
-STRAPI_BASE_URL=strapi.mybaseurl.com.br
-```
-You can later on change these two env variables if you want to.
-
-_For the token change, use **StrapiAuthenticator().set_token()**_
-
-_For the base URL change, call the http object on the desired client and use **http.set_api_base_url()**_
-
 # Usage Example
 You can use strapi-api-sdk to:
 - Create, update and delete registers on all APIs that your Strapi application provides.
@@ -29,15 +15,19 @@ You can use strapi-api-sdk to:
 ## Code example
 ```python
 from strapi_api_sdk.sdk import (
-    StrapiUser, 
-    StrapiClient, 
-    StrapiAuthenticator
+    StrapiAuthenticator,
+    StrapiUser,
+    StrapiClient
 )
 
+
+BASE_URL = "https://strapi.mybaseurl.com.br"
+TOKEN = "my-token-as-string"
+
 # Instantiate clients.
-auth = StrapiAuthenticator()
-user = StrapiUser(auth=auth)
-client = StrapiClient(auth=auth)
+auth = StrapiAuthenticator(base_url=BASE_URL, api_token=TOKEN)
+user = StrapiUser(base_url=BASE_URL, auth=auth)
+client = StrapiClient(base_url=BASE_URL, auth=auth, request_timeout=800)
 
 # Create a new user
 # NOTE: In the absence of password parameter, the class creates a random URL-safe text string, in Base64 encoding and use it as the user password.
@@ -54,8 +44,8 @@ new_user_token = auth.create_token(
 )
 
 # Retrieve some data.
-api_data = client.get_entries(plural_api_id="some-apis", batch_size=100)
-one_api_data = client.get_entry(plural_api_id="some-apis", document_id=1, populate=["*"])
+api_data = client.get_entries(plural_api_id="api-ids", batch_size=100)
+one_api_data = client.get_entry(plural_api_id="api-ids", document_id=1, populate=["*"])
 
 # Create entry.
 api_data_to_create_dict = {
@@ -64,3 +54,5 @@ api_data_to_create_dict = {
 }
 create_api_data = client.create_entry(plural_api_id="some-apis", data=api_data_to_create_dict)
 ```
+
+Happy Coding! :)

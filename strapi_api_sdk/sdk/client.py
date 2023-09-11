@@ -16,9 +16,14 @@ class StrapiClient:
     http: Http = None
     __auth_obj: StrapiAuthenticator = None
 
-    def __init__(self, auth: StrapiAuthenticator) -> None:
+    def __init__(
+        self, 
+        base_url: str,
+        auth: StrapiAuthenticator,
+        request_timeout: int = 600
+    ) -> None:
         """Initialize client."""
-        self.http: Http = Http()
+        self.http: Http = Http(api_base_url=base_url, timeout=request_timeout)
         self.__auth_obj = auth
 
     def __response_handler(self, response: Response) -> Response:
