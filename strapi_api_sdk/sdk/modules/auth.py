@@ -17,9 +17,14 @@ class StrapiAuthenticator:
     http: Http = None
     __token: str = None
     
-    def __init__(self) -> None:
-        self.http: Http = Http()
-        self.__token: str = API_TOKEN
+    def __init__(
+        self, 
+        base_url: str,
+        api_token: str,
+        request_timeout: int = 600
+    ) -> None:
+        self.http: Http = Http(api_base_url=base_url, timeout=request_timeout)
+        self.__token: str = api_token
     
     def __response_handler(self, response: Response) -> Response:
         if 200 <= response.status_code < 300:
@@ -46,7 +51,7 @@ class StrapiAuthenticator:
         self,
         identifier: str,
         password: str,
-        set_as_default_token: bool = False
+        set_as_current_token: bool = False
     ) -> str:
         """Retrieve access token."""
         token = self.__create_auth(
@@ -54,7 +59,7 @@ class StrapiAuthenticator:
             password=password
         )
         
-        if set_as_default_token:
+        if set_as_current_token:
             self.__token = token
 
         return token

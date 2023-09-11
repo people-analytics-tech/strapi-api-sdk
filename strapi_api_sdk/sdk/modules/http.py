@@ -1,19 +1,17 @@
 import requests
 
-from strapi_api_sdk.settings import TIMEOUT, API_BASE_URL
-
 
 class Http:
-    def __init__(self):
-        self.__timeout = TIMEOUT
-        self.__api_base_url = API_BASE_URL
+    def __init__(self, api_base_url: str, timeout: int = 600):
+        self.timeout = timeout
+        self.api_base_url = api_base_url
         self.__headers = {
             "Accept": "application/json",
             "Content-Type": "application/json"
         }
 
-        if not self.__api_base_url.endswith('/'):
-            self.__api_base_url = f"{self.__api_base_url}/"
+        if not self.api_base_url.endswith('/'):
+            self.api_base_url = f"{self.api_base_url}/"
 
     def __http_request(
         self, 
@@ -23,9 +21,9 @@ class Http:
         data: dict = {}, 
         params: dict = {}
     ):
-        url = f"{self.__api_base_url}{endpoint}" 
+        url = f"{self.api_base_url}{endpoint}" 
         headers = {**self.__headers, **headers}
-        timeout = self.__timeout
+        timeout = self.timeout
         
         return requests.request(
             method=method,
@@ -35,15 +33,6 @@ class Http:
             json=data,
             params=params,
         )
-
-    def set_api_base_url(self, api_base_url: str) -> None:
-        if not api_base_url.endswith('/'):
-            api_base_url = f"{api_base_url}/"
-            
-        self.__api_base_url = api_base_url
-
-    def set_timeout(self, timeout: int) -> None:
-        self.__timeout = timeout
 
     def post(
         self, 
